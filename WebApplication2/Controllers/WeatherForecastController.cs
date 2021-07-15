@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
+using BussinessLayer;
 
 namespace WebApplication2.Controllers
 {
@@ -8,29 +10,41 @@ namespace WebApplication2.Controllers
     [Route("[controller]")]
     public class WeatherForecastController : ControllerBase
     {
-        private static List<WeatherForecast> weatherForecasts = new List<WeatherForecast>();
-        private static readonly string[] Summaries = new[]
-        {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
+        private readonly IWeatherForecastService _weatherForecastService;
 
-        private readonly ILogger<WeatherForecastController> _logger;
-
-        public WeatherForecastController(ILogger<WeatherForecastController> logger)
+        public WeatherForecastController(IWeatherForecastService weatherForecastService)
         {
-            _logger = logger;
+            _weatherForecastService = weatherForecastService;
         }
 
         [HttpPost]
-        public void PostSomething(WeatherForecast weatherForecast)
+        public Guid PostSomething(WeatherForecast weatherForecast)
         {
-            weatherForecasts.Add(weatherForecast);
+           return _weatherForecastService.AddWeatherForecast(weatherForecast);
         }
 
         [HttpGet]
         public IEnumerable<WeatherForecast> Get()
         {
-            return weatherForecasts;
+            return _weatherForecastService.GetAll();
+        }
+
+        [HttpGet("{id}")]
+        public WeatherForecast GetById(Guid id)
+        {
+            return _weatherForecastService.GetById(id);
+        }
+
+        [HttpPut]
+        public WeatherForecast Update(WeatherForecast objToUpdate)
+        {
+            return _weatherForecastService.Update(objToUpdate);
+        }
+
+        [HttpDelete("{id}")]
+        public bool Remove(Guid id)
+        {
+            return _weatherForecastService.Delete(id);
         }
     }
 }
