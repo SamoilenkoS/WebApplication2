@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using AutoMapper;
 using DataAccessLayer;
 
 namespace BussinessLayer
@@ -9,10 +10,12 @@ namespace BussinessLayer
     public class WeatherForecastService : IWeatherForecastService
     {
         private readonly IWeatherForecastRepository _weatherForecastRepository;
+        private readonly IMapper _mapper;
 
-        public WeatherForecastService(IWeatherForecastRepository weatherForecastRepository)
+        public WeatherForecastService(IWeatherForecastRepository weatherForecastRepository, IMapper mapper)
         {
             _weatherForecastRepository = weatherForecastRepository;
+            _mapper = mapper;
         }
 
         public Guid AddWeatherForecast(WeatherForecast weatherForecast)
@@ -22,56 +25,35 @@ namespace BussinessLayer
                 throw new ArgumentException("Temperature is too low!");
             }
 
-            return _weatherForecastRepository.
-                AddWeatherForecast(WeatherForecastToWeatherForecastDTO(weatherForecast));
+            var dto = _mapper.Map<WeatherForecastDTO>(weatherForecast);
+
+            return _weatherForecastRepository.AddWeatherForecast(dto);
         }
 
         public WeatherForecast GetById(Guid id)
         {
             var dto = _weatherForecastRepository.GetById(id);
-            return WeatherForecastDTOToWeatherForecast(dto);
+
+            return _mapper.Map<WeatherForecast>(dto);
         }
 
         public IEnumerable<WeatherForecast> GetAll()
         {
             var dtos = _weatherForecastRepository.GetAll();
 
-            return dtos.Select(WeatherForecastDTOToWeatherForecast);
+            return dtos.Select(dto => _mapper.Map<WeatherForecast>(dto));
         }
 
         public WeatherForecast Update(WeatherForecast weatherForecast)
         {
-            var dto = _weatherForecastRepository.Update(WeatherForecastToWeatherForecastDTO(weatherForecast));
+            var dto = _weatherForecastRepository.Update(_mapper.Map<WeatherForecastDTO>(weatherForecast));
 
-            return WeatherForecastDTOToWeatherForecast(dto);
+            return _mapper.Map<WeatherForecast>(dto);
         }
 
         public bool Delete(Guid id)
         {
             return _weatherForecastRepository.Delete(id);
-        }
-
-        private WeatherForecastDTO WeatherForecastToWeatherForecastDTO(WeatherForecast weatherForecast)
-        {
-            return new WeatherForecastDTO
-            {
-                Id = weatherForecast.Id,
-                Date = weatherForecast.Date,
-                Summary = weatherForecast.Summary,
-                TemperatureC = weatherForecast.TemperatureC
-            };
-        }
-
-        private WeatherForecast WeatherForecastDTOToWeatherForecast(WeatherForecastDTO weatherForecastDTO)
-        {
-            return new WeatherForecast
-            {
-                Id = weatherForecastDTO.Id,
-                Date = weatherForecastDTO.Date,
-                Summary = weatherForecastDTO.Summary,
-                TemperatureC = weatherForecastDTO.TemperatureC,
-                TemperatureF = weatherForecastDTO.TemperatureC * 2
-            };
         }
     }
 }

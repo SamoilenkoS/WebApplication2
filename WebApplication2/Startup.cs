@@ -2,17 +2,10 @@ using BussinessLayer;
 using DataAccessLayer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Reflection;
 
 namespace WebApplication2
 {
@@ -32,9 +25,17 @@ namespace WebApplication2
             services.AddScoped<IWeatherForecastRepository, WeatherForecastRepositoryList>();
 
             services.AddControllers();
+
+            var assemblies = new[]
+            {
+              Assembly.GetAssembly(typeof(WeatherForecastProfile))
+            };
+
+            services.AddAutoMapper(assemblies);
+
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+    // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
