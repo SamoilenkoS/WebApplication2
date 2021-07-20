@@ -14,14 +14,14 @@ namespace BussinessLayer
                 .ForMember(x => x.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(x => x.Date, opt => opt.MapFrom(src => src.Date))
                 .ForMember(x => x.Summary, opt => opt.MapFrom(src => src.Summary))
-                .ForMember(x => x.TemperatureC, opt => opt.MapFrom(src => src.TemperatureC));
+                .ForMember(x => x.Temperature, opt => opt.MapFrom(src => src.TemperatureC));
 
             CreateMap<WeatherForecastDTO, WeatherForecast>()
                 .ForMember(x => x.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(x => x.Date, opt => opt.MapFrom(src => src.Date))
                 .ForMember(x => x.Summary, opt => opt.MapFrom(src => src.Summary))
-                .ForMember(x => x.TemperatureC, opt => opt.MapFrom(src => src.TemperatureC))
-                .ForMember(x => x.TemperatureF, opt => opt.MapFrom(src => src.TemperatureC * 2));
+                .ForMember(x => x.TemperatureC, opt => opt.MapFrom(src => src.Temperature))
+                .ForMember(x => x.TemperatureF, opt => opt.MapFrom(src => src.Temperature * 2));
         }
     }
 }

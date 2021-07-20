@@ -25,6 +25,7 @@ namespace BussinessLayer
                 throw new ArgumentException("Temperature is too low!");
             }
 
+            weatherForecast.Id = Guid.NewGuid();
             var dto = _mapper.Map<WeatherForecastDTO>(weatherForecast);
 
             return _weatherForecastRepository.AddWeatherForecast(dto);
